@@ -14,6 +14,12 @@ stages:
           steps:
             - script: echo "Building the application"
               displayName: "Build"
+            - task: Docker@2
+              displayName: Build an image
+              inputs:
+                repository: "https://github.com/Dishaangsali/Spring-Boot-Sample-Project.git"
+                command: Build
+                Dockerfile: Dockerfile
 
     - stage: Test
       jobs:
