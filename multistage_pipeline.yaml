@@ -7,6 +7,8 @@ stages:
     - stage: Build
       jobs:
         - job: Build
+          pool:
+            -name: 'MyAgentPool'
           steps:
             - script: echo "Building the application"
               displayName: "Build"
@@ -14,6 +16,8 @@ stages:
     - stage: Test
       jobs:
         - job: Test
+          pool:
+            -name: 'MyAgentPool'
           steps:
             - script: echo "Running tests for application"
               displayName: "Test"
@@ -21,6 +25,8 @@ stages:
     - stage: Deploy
       jobs:
         - job: Deploy
+          pool:
+            -name: 'MyAgentPool'
           steps:
             - script: echo "Deploying application to production"
               displayName: "Deploy"
