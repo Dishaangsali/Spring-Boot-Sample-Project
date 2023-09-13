@@ -1,36 +1,115 @@
-trigger:
-    branches:
-        include:
-            - main
-
 pool:
+
   name: 'MyAgentPool'
+
   vmImage: 'ubuntu-latest'
 
+ 
+
 stages:
-    - stage: Build
-      jobs:
-        - job: Build
-          steps:
-            - script: echo "Building the application"
-              displayName: "Build"
-            - task: Docker@2
-              displayName: Build an image
-              inputs:
-                repository: "https://github.com/Dishaangsali/Spring-Boot-Sample-Project.git"
-                command: Build
-                Dockerfile: Dockerfile
 
-    - stage: Test
-      jobs:
-        - job: Test
-          steps:
-            - script: echo "Running tests for application"
-              displayName: "Test"
+  - stage: Build
 
-    - stage: Deploy
-      jobs:
-        - job: Deploy
-          steps:
-            - script: echo "Deploying application to production"
-              displayName: "Deploy"
+    jobs:
+
+      - job: Build
+
+        steps:
+
+        - task: Maven@4
+
+          displayName: 'Maven Build'
+
+          inputs:
+
+            mavenPomFile: 'pom.xml'  # Specify the correct path to your pom.xml
+
+            goals: 'clean package -DskipTests'
+
+            publishJUnitResults: false
+
+ 
+
+        - task: CopyFiles@2
+
+          displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+
+          inputs:
+
+            SourceFolder: '$(system.defaultworkingdirectory)'
+
+            Contents: '**/*.jar'
+
+            TargetFolder: '$(build.artifactstagingdirectory)'
+
+          condition: succeededOrFailed()
+
+ 
+
+        - task: PublishBuildArtifacts@1
+
+          displayName: 'Publish Artifact: drop'
+
+          inputs:
+
+            PathtoPublish: '$(build.artifactstagingdirectory)'
+
+          condition: succeededOrFailed()
+
+ 
+
+  - stage: Dev
+
+    jobs:
+
+      - job: DeployToDev
+
+        steps:
+
+          - script: |
+
+              # Deployment to your development environment
+
+              # Example: Deploy to a development server
+
+              # Replace this with your deployment script
+
+            displayName: 'Deploy to Dev'
+
+ 
+
+  - stage: Test
+
+    jobs:
+
+      - job: TestDeployment
+
+        steps:
+
+          - script: |
+
+              # Run tests on the deployed application in the Test environment
+
+              # Replace this with your test script
+
+            displayName: 'Run Tests in Test Environment'
+
+ 
+
+  - stage: Staging
+
+    jobs:
+
+      - job: DeployToStaging
+
+        steps:
+
+          - script: |
+
+              # Deployment to your staging environment
+
+              # Example: Deploy to a staging server
+
+              # Replace this with your deployment script
+
+            displayName: 'Deploy to Staging'
